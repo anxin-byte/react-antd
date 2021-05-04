@@ -1,0 +1,15 @@
+.logo{
+  display: flex;
+  height: 83px;
+  align-items: center;
+  justify-content: center;
+  span{
+    text-align: center;
+    display: block;
+    width: 177px;
+    height: 47px;
+    line-height: 47px;
+    color: #ffffff;
+    background: #1a2d3f;
+  }
+}

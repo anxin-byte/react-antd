@@ -1,2 +1,9 @@
 @import "./scssConfig";
 @import "./normalize.scss";
+body{
+  height: 100vh;
+  background-color: #001529 !important;
+}
+.inline-button{
+  margin: 0px 10px;
+}

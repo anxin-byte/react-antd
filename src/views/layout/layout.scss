@@ -1,0 +1,21 @@
+.layout-wrap{
+  height: 100vh;
+}
+.layout-header{
+  position: relative;
+  z-index: 2;
+  height: 75px;
+  background: #ffffff;
+  line-height: 75px;
+  padding: 0 20px;
+  @include webkit(box-shadow,0 3px 16px 0 rgba(0,0,0,.1));
+  .collapsed-icon{
+    cursor: pointer;
+    font-size: 25px;
+  }
+}
+.layout-content{
+  border: 30px solid #f7f7f7;
+  background: #fff;
+  padding: 30px;
+}
