@@ -1,9 +1,10 @@
 import React,{Component} from "react";
 import PropTypes from 'prop-types';
 
-import {Button, Table, message, Form, Input,} from "antd"
+import {Button, message, Form, Input, Modal,} from "antd"
 import BaseTable from "./BaseTable";
 import {TableList} from "@api/common";
+import {Delete} from "@api/department";
 import requestUrl from "../../api/requestUrl";
 
 class TableIndex extends Component{
@@ -14,21 +15,19 @@ class TableIndex extends Component{
             pageNumber:1,
             pageSize:10,
             keyword:"",
-            // switch_id:'',
-            loading_table:false,
+            loading_table:false, // table 表格懒加载
             // 列表数据
             data:[],
             total:null,
             // 多选
             selected_row_keys:[],
             // modal
-            // visible:false,
-            // confirmLoading:false
+            visible:false,
+            confirmLoading:false
         }
     }
     // 初始化加载数据
     componentDidMount() {
-        // console.log(requestUrl[this.props.config.url])
         this.loadData()
     }
     // 搜索
@@ -65,17 +64,42 @@ class TableIndex extends Component{
             this.setState({loading_table:false})
         })
     }
-    // 批量删除
-    deleteAllHandler = ()=>{
-        console.log("00000",this.state.selected_row_keys)
-        if(this.state.selected_row_keys.length === 0) return false
-        const id = this.state.selected_row_keys.join()
-        this.props.deleteHandler(id)
-        // this.setState({id},() => this.deleteHanler())
-        // setTimeout(()=>{},0)
-        // this.deleteHanler(id)
-        // console.log()
+    /** 删除 */
+    onHandlerDelete(id){
+        console.log(id)
+        this.setState({ visible: true })
+        if(id) { this.setState({selected_row_keys: [id] }); }
     }
+    /** 确认弹窗 */
+    deleteHandler = () => {
+        // 判断是否已选择删除的数据
+        if(this.state.selected_row_keys.length === 0) {
+            message.info("请选择需要删除的数据");
+            return false;
+        }
+        this.setState({ confirmLoading: true })
+        const id = this.state.selected_row_keys.join();
+        // console.log(id)
+
+        Delete({id}).then(res => {
+            message.info(res.data.message)
+            this.setState({
+                id:"",
+                confirmLoading:false,
+                visible: false,
+                selected_row_keys:[]
+            },() => this.loadData())
+            this.loadData()
+        }).catch(err=>{
+            this.setState({
+                id:"",
+                confirmLoading:false,
+                visible: false,
+                selected_row_keys:[]
+            })
+        })
+    }
+    // 分页
     onHandlerCurrentChange=(pageNumber)=>{
         // if(pageNumber)
         // console.log(pageNumber)
@@ -87,13 +111,14 @@ class TableIndex extends Component{
         // console.log(this.state.pageNumber)
         this.setState({pageNumber:1,pageSize},() => this.loadData())
     }
+    // 批量选中
     onCheckbox = (selected_row_keys)=>{
         this.setState({
             selected_row_keys
         })
     }
     render() {
-        const {data,loading_table,total} = this.state
+        const {data,loading_table,visible,total,confirmLoading} = this.state
         const rowSelection = { onChange:this.onCheckbox }
         const {thead,checkbox,rowKey} = this.props.config
         return(
@@ -116,10 +141,19 @@ class TableIndex extends Component{
                     changePageCurrent={this.onHandlerCurrentChange}
                     changePageSize={this.onHandlerSizeChange}
                     delete_button={this.props.delete_button}
-                    handlerDeleteAll={this.deleteAllHandler}
+                    handlerDeleteAll={()=> this.onHandlerDelete()}
                     rowSelection = {checkbox ? rowSelection : null}
                     rowKey={rowKey || "id"}
                 />
+                <Modal title="提示"
+                       confirmLoading={confirmLoading}
+                       visible={visible}
+                       onOk={this.deleteHandler}
+                       okText="确认"
+                       cancelText="取消"
+                       onCancel={() => this.setState({visible:false})}>
+                    <p className="text-center">是否确认删除? <strong className="color-red">此操作将无法恢复!</strong> </p>
+                </Modal>
             </>
         )
     }

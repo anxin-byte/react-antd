@@ -2,7 +2,6 @@ import React,{Component} from "react";
 import PropTypes from 'prop-types';
 
 import {Button,Table,message,Pagination,Row,Col} from "antd"
-import TableIndex from "./TableIndex";
 
 class BaseTable extends Component{
     constructor(props) {
