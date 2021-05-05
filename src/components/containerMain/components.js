@@ -12,6 +12,6 @@ files.keys().map(key => {
     json_object.path = path
     json_object.component = component
     // 生产路由数组
-    components.push(json_object)
+   return  components.push(json_object)
 })
 export default components

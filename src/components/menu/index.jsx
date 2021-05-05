@@ -13,8 +13,8 @@ class AsideMenu extends Component{
         this.state={
             selected_keys:[],
             open_keys:[],
-            default_openKeys:[],
-            default_selectedKeys:[],
+            // default_openKeys:[],
+            // default_selectedKeys:[],
             collapsed:false
         }
     }
@@ -65,7 +65,7 @@ class AsideMenu extends Component{
     // 无子集
     renderMenu = ({key,title}) => <Menu.Item key={key}  icon={<PieChartOutlined />}><Link to={key}>{title}</Link></Menu.Item>
     render() {
-        const {selected_keys, open_keys, default_openKeys,default_selectedKeys} = this.state
+        const {selected_keys, open_keys} = this.state
         return(
             <>
                 <h1 className="logo">
