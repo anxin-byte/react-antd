@@ -5,3 +5,4 @@ import {post} from "../utils/request";
  */
 
 export const  TableList = (url,data) => post(url,data)
+export const  RequestData = (url,data) => post(url,data)

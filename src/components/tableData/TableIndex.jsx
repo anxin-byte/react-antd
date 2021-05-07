@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 
 import {Button, message, Form, Input, Modal,} from "antd"
 import BaseTable from "./BaseTable";
+import FormSearch from "../formSearch/FormSearch";
 import {TableList} from "@api/common";
 import {Delete} from "@api/department";
 import requestUrl from "../../api/requestUrl";
@@ -14,7 +15,8 @@ class TableIndex extends Component{
             // 请求数据
             pageNumber:1,
             pageSize:10,
-            keyword:"",
+            search_data:{},
+            // keyword:"",
             loading_table:false, // table 表格懒加载
             // 列表数据
             data:[],
@@ -30,26 +32,30 @@ class TableIndex extends Component{
     componentDidMount() {
         this.loadData()
     }
-    // 搜索
-    onFinish = values =>{
-        console.log(values)
-        this.setState({
-            keyword:values.username,
-            pageNumber:1,
-            pageSize:10
-        },()=> this.loadData() )
-
-    }
+    // onFinish = values =>{
+    //     console.log(values)
+    //     this.setState({
+    //         keyword:values.username,
+    //         pageNumber:1,
+    //         pageSize:10
+    //     },()=> this.loadData() )
+    //
+    // }
     // 加载数据接口
     loadData(){
-        const {pageNumber,pageSize,keyword} = this.state
+        const {pageNumber,pageSize,search_data} = this.state
         const request_data = {
             pageNumber,
             pageSize
         }
-        if(keyword){
-            request_data.name = keyword
+        // console.log(search_data)
+        if(JSON.stringify(search_data) !== "{}"){
+            for(let key in search_data){
+                request_data[key] = search_data[key]
+            }
         }
+        // console.log(request_data)
+        // return false
         this.setState({loading_table:true})
         TableList(requestUrl[this.props.config.url],request_data).then(res=>{
             const res_data = res.data.data
@@ -117,23 +123,33 @@ class TableIndex extends Component{
             selected_row_keys
         })
     }
+    //  搜索
+    search=(search_data)=>{
+        this.setState({
+            pageNumber:1,
+            pageSize:10,
+            search_data
+        },()=> this.loadData())
+        console.log(search_data)
+    }
     render() {
         const {data,loading_table,visible,total,confirmLoading} = this.state
         const rowSelection = { onChange:this.onCheckbox }
-        const {thead,checkbox,rowKey} = this.props.config
+        const {thead,checkbox,rowKey,form_item} = this.props.config
         return(
             <>
-                <Form style={{marginBottom:'20px'}} layout="inline" onFinish={this.onFinish}>
-                    <Form.Item
-                        label="部门名称"
-                        name="username"
-                    >
-                        <Input  placeholder="请输入部门名称" />
-                    </Form.Item>
-                    <Form.Item shouldUpdate={true}>
-                        <Button type="primary" htmlType="submit">搜索</Button>
-                    </Form.Item>
-                </Form>
+                {/*<FormSearch formItem={form_item} search={this.search}/>*/}
+                {/*<Form style={{marginBottom:'20px'}} layout="inline" onFinish={this.onFinish}>*/}
+                {/*    <Form.Item*/}
+                {/*        label="部门名称"*/}
+                {/*        name="username"*/}
+                {/*    >*/}
+                {/*        <Input  placeholder="请输入部门名称" />*/}
+                {/*    </Form.Item>*/}
+                {/*    <Form.Item shouldUpdate={true}>*/}
+                {/*        <Button type="primary" htmlType="submit">搜索</Button>*/}
+                {/*    </Form.Item>*/}
+                {/*</Form>*/}
                 <BaseTable
                     columns = {thead}
                     dataSource={data}

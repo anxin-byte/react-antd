@@ -2,9 +2,13 @@ import React,{Component} from "react";
 import {Link} from "react-router-dom";
 import {Button,Switch,message} from "antd"
 
+
 //Api
 import {Status} from "@api/department";
+import Store from "../../store/index";
+
 import TableIndex from "../../components/tableData/TableIndex";
+import FormSearch from "../../components/formSearch/FormSearch";
 class DepartmentList extends Component{
     constructor(props) {
         super(props);
@@ -15,6 +19,25 @@ class DepartmentList extends Component{
             switch_id:'',
 
             delete_button:true,
+            form_item: [
+                {
+                    type: "Input",
+                    label: "部门名称",
+                    name: "name",
+                    // required: true,
+                    style: { width: "200px",marginBottom:"10px" },
+                    placeholder: "请输入部门名称"
+                },
+                {
+                    type: "Select",
+                    label: "禁启用",
+                    name: "status",
+                    placeholder: "请选择",
+                    // required: true,
+                    style: { width: "80px",marginBottom:"10px" },
+                    optionsKey:"status"
+                },
+            ],
             config:{
                 url:"departmentList",
                 checkbox:true,
@@ -39,9 +62,16 @@ class DepartmentList extends Component{
                 }
             }
         ],
+
             },
         }
     }
+    componentDidMount() {
+        const {config} = Store.getState()
+        console.log(config)
+
+    }
+
     // table switch 切换
     onHandlerSwitch(switch_id,status){
         if (!switch_id) return false
@@ -56,9 +86,10 @@ class DepartmentList extends Component{
         this.refs.$TableIndex.onHandlerDelete(id)
     }
     render() {
-        const {config,delete_button} = this.state
+        const {config,delete_button,form_item} = this.state
         return (
             <>
+                <FormSearch formItem={form_item}/>
                 <TableIndex  ref ="$TableIndex" delete_button={delete_button}  config={config}/>
             </>
         )
