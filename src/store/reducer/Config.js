@@ -1,3 +1,5 @@
+import { configAddStatus } from "../Type";
+
 const config={
     status:[
         {label:"禁用", value:true,},
@@ -6,10 +8,10 @@ const config={
 }
 const configReducer=function (state=config,action){
     switch (action.type){
-        case "config":
+        case configAddStatus:
             return{
                 ...state,
-                status: action.data
+                status:[...state.status,action.payload]
             }
         default:
             return state

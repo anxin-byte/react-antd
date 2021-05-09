@@ -1,12 +1,19 @@
-import React,{Component} from "react";
+import React, {Component, forwardRef} from "react";
 import PropTypes from 'prop-types';
 
-import {Button, message, Form, Input, Modal,} from "antd"
+import {Button, message, Form, Input, Modal,Row,Col} from "antd"
 import BaseTable from "./BaseTable";
 import FormSearch from "../formSearch/FormSearch";
-import {TableList} from "@api/common";
-import {Delete} from "@api/department";
+import {TableList,TableDelete } from "@api/common";
 import requestUrl from "../../api/requestUrl";
+
+// import {Delete} from "@api/department";
+// connect
+// import { connect } from "react-redux";
+// import { bindActionCreators } from "redux";
+import { addDepartmentList } from "@/store/action/Department";
+import Store from "../../store";
+// import {addStatus} from "../../store/action/Config";
 
 class TableIndex extends Component{
     constructor(props) {
@@ -59,7 +66,10 @@ class TableIndex extends Component{
         this.setState({loading_table:true})
         TableList(requestUrl[this.props.config.url],request_data).then(res=>{
             const res_data = res.data.data
+
             if(res_data){
+                Store.dispatch(addDepartmentList(res_data))
+                // this.props.actions.addDepartmentList(res_data.data)
                 this.setState({
                     loading_table:false,
                     data:res_data.data,
@@ -72,7 +82,7 @@ class TableIndex extends Component{
     }
     /** 删除 */
     onHandlerDelete(id){
-        console.log(id)
+        // console.log(id)
         this.setState({ visible: true })
         if(id) { this.setState({selected_row_keys: [id] }); }
     }
@@ -86,24 +96,35 @@ class TableIndex extends Component{
         this.setState({ confirmLoading: true })
         const id = this.state.selected_row_keys.join();
         // console.log(id)
-
-        Delete({id}).then(res => {
-            message.info(res.data.message)
+        TableDelete(requestUrl[`${this.props.config.url}Delete`],{id}).then(response => {
+            message.info(response.data.message);
             this.setState({
-                id:"",
-                confirmLoading:false,
                 visible: false,
-                selected_row_keys:[]
-            },() => this.loadData())
-            this.loadData()
-        }).catch(err=>{
-            this.setState({
-                id:"",
+                id: "",
                 confirmLoading:false,
-                visible: false,
-                selected_row_keys:[]
+                // modalconfirmLoading: false,
+                selectedRowKeys: []
             })
+            // 重新加载数据
+            this.loadData();
         })
+        // Delete({id}).then(res => {
+        //     message.info(res.data.message)
+        //     this.setState({
+        //         id:"",
+        //         confirmLoading:false,
+        //         visible: false,
+        //         selected_row_keys:[]
+        //     },() => this.loadData())
+        //     this.loadData()
+        // }).catch(err=>{
+        //     this.setState({
+        //         id:"",
+        //         confirmLoading:false,
+        //         visible: false,
+        //         selected_row_keys:[]
+        //     })
+        // })
     }
     // 分页
     onHandlerCurrentChange=(pageNumber)=>{
@@ -130,26 +151,22 @@ class TableIndex extends Component{
             pageSize:10,
             search_data
         },()=> this.loadData())
-        console.log(search_data)
+        // console.log(search_data)
     }
     render() {
-        const {data,loading_table,visible,total,confirmLoading} = this.state
+        const {data,visible,total,confirmLoading,} = this.state
         const rowSelection = { onChange:this.onCheckbox }
-        const {thead,checkbox,rowKey,form_item} = this.props.config
+        const {thead,checkbox,rowKey,form_item,formSearchCol,formRightCol} = this.props.config
         return(
             <>
-                {/*<FormSearch formItem={form_item} search={this.search}/>*/}
-                {/*<Form style={{marginBottom:'20px'}} layout="inline" onFinish={this.onFinish}>*/}
-                {/*    <Form.Item*/}
-                {/*        label="部门名称"*/}
-                {/*        name="username"*/}
-                {/*    >*/}
-                {/*        <Input  placeholder="请输入部门名称" />*/}
-                {/*    </Form.Item>*/}
-                {/*    <Form.Item shouldUpdate={true}>*/}
-                {/*        <Button type="primary" htmlType="submit">搜索</Button>*/}
-                {/*    </Form.Item>*/}
-                {/*</Form>*/}
+                <Row>
+                    <Col span={formSearchCol || 20}><FormSearch formItem={form_item} search={this.search} /></Col>
+                    {/*<Col span={formRightCol || 4}>*/}
+                    {/*    <div className="pull-right">*/}
+                    {/*        {this.props.children}*/}
+                    {/*    </div>*/}
+                    {/*</Col>*/}
+                </Row>
                 <BaseTable
                     columns = {thead}
                     dataSource={data}
@@ -182,4 +199,13 @@ TableIndex.proptype={
 TableIndex.defaultProps={
     delete_button:false
 }
+// const mapDispatchToProps = (dispatch) => {
+//     return {
+//         actions: bindActionCreators({
+//             addDepartmentList: addDepartmentList
+//         }, dispatch)
+//
+//     }
+// }
+// export default connect(null,mapDispatchToProps)(TableIndex)
 export default TableIndex

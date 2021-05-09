@@ -8,7 +8,9 @@ import {Status} from "@api/department";
 import Store from "../../store/index";
 
 import TableIndex from "../../components/tableData/TableIndex";
-import FormSearch from "../../components/formSearch/FormSearch";
+import { addStatus } from "../../store/action/Config";
+
+// import FormSearch from "../../components/formSearch/FormSearch";
 class DepartmentList extends Component{
     constructor(props) {
         super(props);
@@ -19,25 +21,6 @@ class DepartmentList extends Component{
             switch_id:'',
 
             delete_button:true,
-            form_item: [
-                {
-                    type: "Input",
-                    label: "部门名称",
-                    name: "name",
-                    // required: true,
-                    style: { width: "200px",marginBottom:"10px" },
-                    placeholder: "请输入部门名称"
-                },
-                {
-                    type: "Select",
-                    label: "禁启用",
-                    name: "status",
-                    placeholder: "请选择",
-                    // required: true,
-                    style: { width: "80px",marginBottom:"10px" },
-                    optionsKey:"status"
-                },
-            ],
             config:{
                 url:"departmentList",
                 checkbox:true,
@@ -62,14 +45,36 @@ class DepartmentList extends Component{
                 }
             }
         ],
+                form_item: [
+                    {
+                        type: "Input",
+                        label: "部门名称",
+                        name: "name",
+                        // required: true,
+                        style: { width: "200px",marginBottom:"10px" },
+                        placeholder: "请输入部门名称"
+                    },
+                    {
+                        type: "Select",
+                        label: "禁启用",
+                        name: "status",
+                        placeholder: "请选择",
+                        // required: true,
+                        style: { width: "80px",marginBottom:"10px" },
+                        optionsKey:"status"
+                    },
+                ],
 
             },
         }
     }
     componentDidMount() {
-        const {config} = Store.getState()
-        console.log(config)
-
+        // const {config} = Store.getState()
+        // console.log(config)
+        Store.dispatch(addStatus({
+            label: "所有",
+            value: "all"
+        }))
     }
 
     // table switch 切换
@@ -89,7 +94,7 @@ class DepartmentList extends Component{
         const {config,delete_button,form_item} = this.state
         return (
             <>
-                <FormSearch formItem={form_item}/>
+                {/*<FormSearch formItem={form_item}/>*/}
                 <TableIndex  ref ="$TableIndex" delete_button={delete_button}  config={config}/>
             </>
         )

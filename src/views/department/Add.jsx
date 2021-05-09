@@ -67,6 +67,7 @@ class DepartmentAdd extends Component{
     }
     // 获取ID
     componentWillMount() {
+        // console.log('00000')
         const url = new URLSearchParams(this.props.location.search)
         // console.log(url)
         if(url.get('id')) {

@@ -2,19 +2,25 @@ import React,{Component} from "react";
 import PropTypes from 'prop-types';
 
 import {Button,Table,message,Pagination,Row,Col} from "antd"
+import { connect } from "react-redux";
 
 class BaseTable extends Component{
     constructor(props) {
         super(props);
-        this.state={}
+        this.state={
+        }
     }
+    componentDidMount() {
+        // console.log(this.props.list)
+    }
+
     render() {
         // rowSelection = {checkbox ? rowSelection : null}
         const { columns,dataSource,total,changePageCurrent,changePageSize,delete_button,handlerDeleteAll,rowSelection,rowKey} = this.props
         return (
             <>
-                <Table pagination={false}  rowKey={rowKey} rowSelection={rowSelection}  columns = {columns} dataSource={dataSource} bordered></Table>
-                <Row>
+                <Table scroll={{ y: 500 }}  pagination={false}  rowKey={rowKey} rowSelection={rowSelection}  columns = {columns} dataSource={this.props.list} bordered></Table>
+                <Row style={{marginTop:"10px"}}>
                     <Col span={8}>{delete_button && <Button onClick={handlerDeleteAll}>批量删除</Button>}</Col>
                     <Col span={16}>
                         <Pagination
@@ -53,4 +59,14 @@ BaseTable.defaultProps={
     delete_button:false,
     rowKey:"id"
 }
-export default BaseTable
+//把store中的数据映射到这个组件变成props
+const mapStateToProps = (state)=> {
+    // console.log(state)
+    return {
+        list: state.department.departmentList
+    }
+}
+export default connect(
+    mapStateToProps,
+    null
+)(BaseTable);

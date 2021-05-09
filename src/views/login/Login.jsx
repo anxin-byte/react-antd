@@ -8,7 +8,10 @@ import {Logins} from "../../api/account"; // Api
 import Code from "../../components/code"; // 获取验证码按钮组件
 import CryptoJs from 'crypto-js'; // 密码加密
 import {setToken,setUsername} from "../../utils/cookies"; // Session
-
+// connect
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+import { setTokenAction, setUsernameAction } from "@/store/action/App";
 class Login extends Component{
     constructor(props) {
         super(props);
@@ -37,6 +40,8 @@ class Login extends Component{
             this.setState({
                 loading:false
             })
+            this.props.actions.setTokens(res.data.data.token)
+            this.props.actions.setUsernames(res.data.data.username)
             setUsername(res.data.data.username)
             setToken(res.data.data.token)
             this.props.history.push('/dashboard');
@@ -94,4 +99,15 @@ class Login extends Component{
                 </div>)
     }
 }
-export default withRouter(Login)
+const mapDispatchToProps = (dispatch) => {
+    return {
+        actions: bindActionCreators({
+            setTokens: setTokenAction,
+            setUsernames: setUsernameAction
+        }, dispatch)
+
+    }
+}
+export default connect(
+    null,mapDispatchToProps
+)(withRouter(Login))
