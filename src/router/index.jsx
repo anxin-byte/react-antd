@@ -36,8 +36,8 @@ const router = [
         key: '/dashboard/job',
         role: ["user"],
         child: [
-            {key: '/dashboard/job/list', title: '职位列表', icon: ''},
-            {key: '/dashboard/job/add', title: '添加职位', icon: ''}
+            {key: '/dashboard/job/JobList', title: '职位列表', icon: ''},
+            {key: '/dashboard/job/JobAdd', title: '添加职位', icon: ''}
         ]
     },
     {
@@ -45,8 +45,8 @@ const router = [
         icon: 'edit',
         key: '/dashboard/staff',
         child: [
-            {key: '/dashboard/staff/list', title: '职员列表', icon: ''},
-            {key: '/dashboard/staff/add', title: '添加职员', icon: ''}
+            {key: '/dashboard/staff/List', title: '职员列表', icon: ''},
+            {key: '/dashboard/staff/Add', title: '添加职员', icon: ''}
         ]
     },
     {
